@@ -9,6 +9,17 @@ type JCSet struct {
 	items   []*Item
 }
 
+// Items - retrieve all items from set
+func (s *JCSet) Items() []Item {
+	var items []Item
+
+	for _, item := range s.items {
+		items = append(items, *item)
+	}
+
+	return items
+}
+
 // Add adds a new element to the Set. Returns a pointer to the Set.
 func (s *JCSet) Add(t Item) *JCSet {
 	if s.uniques == nil {
@@ -27,7 +38,7 @@ func (s *JCSet) Pop() Item {
 	var i Item
 	// l := len(s.items) - 1
 	// indx := 0
-	if s.emptyOrUnInit() {
+	if s.emptyOrNotInit() {
 		return nil
 	}
 
@@ -40,7 +51,7 @@ func (s *JCSet) Pop() Item {
 
 // Remove - delete element from set
 func (s *JCSet) Remove(i Item) Item {
-	if s.emptyOrUnInit() {
+	if s.emptyOrNotInit() {
 		return nil
 	}
 
@@ -50,8 +61,29 @@ func (s *JCSet) Remove(i Item) Item {
 	return item
 }
 
+// Clear - remove all items from set
+func (s *JCSet) Clear() {
+	for k := range s.uniques {
+		delete(s.uniques, k)
+	}
+	s.items = make([]*Item, 0)
+}
+
+// Intersection - returns sets intesetction as set
+func (s *JCSet) Intersection(s2 *JCSet) *JCSet {
+	var s3 *JCSet
+	for i := range s.uniques {
+		_, ok := s2.uniques[i]
+		if ok {
+			s3.Add(i)
+		}
+	}
+
+	return s3
+}
+
 // check if set is initialized or is not empty
-func (s *JCSet) emptyOrUnInit() bool {
+func (s *JCSet) emptyOrNotInit() bool {
 	return s.uniques == nil || len(s.uniques) == 0
 }
 

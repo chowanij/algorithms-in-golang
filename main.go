@@ -12,6 +12,7 @@ func main() {
 	mySet.Add("abcd")
 	mySet.Add(123)
 	mySet.Add(123.123)
+	fmt.Println(mySet.Items())
 	fmt.Println(mySet.Pop())
 	fmt.Println(mySet.Pop())
 	fmt.Println(mySet.Pop())
