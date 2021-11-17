@@ -1,5 +1,9 @@
 package collections
 
+import (
+	"fmt"
+)
+
 // Item the type of the Set
 type Item interface{}
 
@@ -11,13 +15,28 @@ type JCSet struct {
 
 // Items - retrieve all items from set
 func (s *JCSet) Items() []Item {
-	var items []Item
-
-	for _, item := range s.items {
-		items = append(items, *item)
+	deref := make([]Item, len(s.items), cap(s.items))
+	for idx, item := range s.items {
+		deref[idx] = *item
 	}
 
-	return items
+	return deref
+}
+
+// Equals - compares 2 sets and return tru if equls, flase otherwise
+func (s JCSet) Equals(s2 JCSet) bool {
+	if len(s.items) != len(s2.items) {
+		return false
+	}
+	
+	for _, i := range s.Items() {
+		_, ok := s2.uniques[i]
+		if !ok {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Add adds a new element to the Set. Returns a pointer to the Set.
@@ -70,16 +89,28 @@ func (s *JCSet) Clear() {
 }
 
 // Intersection - returns sets intesetction as set
-func (s *JCSet) Intersection(s2 *JCSet) *JCSet {
-	var s3 *JCSet
-	for i := range s.uniques {
-		_, ok := s2.uniques[i]
+func (s *JCSet) Intersection(s2 *JCSet) JCSet {
+	var s3 JCSet
+
+	for i := range (*s).uniques {
+		_, ok := (*s2).uniques[i]
 		if ok {
 			s3.Add(i)
 		}
+
 	}
 
 	return s3
+}
+
+func (s JCSet) String() string {
+	deref := make([]Item, len(s.items), cap(s.items))
+
+	for idx, item := range s.items {
+		deref[idx] = *item
+	}
+
+	return fmt.Sprintf("%v", deref)
 }
 
 // check if set is initialized or is not empty
